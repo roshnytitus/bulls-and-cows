@@ -1,0 +1,194 @@
+// Roshny Titus
+// Bulls and Cows Game
+
+
+package bullsandcows;
+
+import java.util.Scanner;
+import java.util.concurrent.TimeUnit;
+
+
+public class BullsAndCows {
+
+static Scanner in = new Scanner (System.in);
+    
+    public static final String ANSI_PURPLE = "\u001B[35m";
+    public static final String ANSI_RED = "\u001B[31m";
+    public static final String ANSI_BLUE = "\u001B[34m";
+    public static final String ANSI_RESET = "\u001B[0m";
+
+    public static void main(String[] args) throws InterruptedException {
+        
+        // Welcome Outputs
+        System.out.println(ANSI_BLUE + "Welcome to BULLS & COWS" + ANSI_RESET);
+        System.out.println(" ");
+        
+        // Asks user if they would like to read the rules. The while loop repeats if the input is not 'yes' or 'no'.
+        System.out.println("Would you like to read the rules? (Yes or No)");
+        String rules = in.nextLine().toLowerCase(); 
+        while (!rules.equalsIgnoreCase("yes") && !rules.equalsIgnoreCase("no")){
+            System.out.println("Please enter 'yes' or 'no'.");
+            rules = in.nextLine().toLowerCase();
+        }
+        // Rules Outputs                     
+        System.out.println("");
+        switch(rules){
+            case "yes": 
+                TimeUnit.MILLISECONDS.sleep(300);
+                System.out.println("Rules: You must guess a four digit number, where each digit is different and within the range of 1 to 9.");
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println("After every guess, you will be told how many bulls and cows you have.");
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println("Bulls are the number of digits you guessed with the correct value and correct position.");
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println("Cows are the number of digits you guessed with the correct value but incorrect position.");
+                TimeUnit.SECONDS.sleep(1);
+                System.out.println("Try to guess the number is as few tries as possible! Have fun!");
+                TimeUnit.SECONDS.sleep(1);
+            default: System.out.println("Let's start then!");
+                    System.out.println("");
+        }
+                       
+        // Beginning of do-while loop (repeats every time the user would like to replay the game.
+        String replay = " ";
+        
+        do{
+            // A 4-digit number is selected, using a random selection for each digit, so that each digit is between 1 & 9 and each digit is different.
+            int a = (int)(9*Math.random () + 1);
+            int b = (int)(9*Math.random () + 1);
+            int c = (int)(9*Math.random () + 1);
+            int d = (int)(9*Math.random () + 1);
+
+            while (b == a){
+                b = (int)(9*Math.random () + 1);}
+            while (c == a || c == b){
+                c = (int)(9*Math.random () + 1);}
+            while (d == a || d == b || d == c){
+                d = (int)(9*Math.random () + 1);}
+
+            String start = "RANDOM NUMBER : ????";
+            printSlowly(start);
+
+            // Defining the main variables.  
+            int [] number = {a, b, c, d};
+            int [] guessArray = new int[4];
+            int guess = 0;
+            int guessCount = 0;
+            int bulls = 0;
+            int cows = 0;
+
+            // Begining of while loop (repeats until the number is guessed correctly).
+            while (bulls != 4){
+
+                // Beginning of inner while loop (repeats if the input does not meet conditions).
+                boolean incorrectEntry = true;
+                while (incorrectEntry == true){
+
+                    boolean cont = false;
+
+                    // Try-catch loop to repeat every time an incorrect info type is entered.
+                    do{
+                        try{
+                            System.out.println(" ");
+                            System.out.println("What is your guess?");
+                            guess = in.nextInt();
+                            cont = true;}
+                        catch (Exception e){
+                            System.out.println(ANSI_RED + "Incorrect info type; Please enter an integer!" + ANSI_RESET);
+                            in.nextLine();}       
+                    }
+                    while(cont == false);
+
+                    // Checking if the number is 4 digits long.
+                    if (guess < 1000 || guess > 9999){
+                        System.out.println(ANSI_RED + "Please re-enter your guess with a four-digit number." + ANSI_RESET);
+                        continue;}
+
+                    // Separating the guess into 4 different digits, and placing them into an array.             
+                    for (int i = 3; i >= 0; i--) {
+                        guessArray[i] = guess%10;
+                        guess = guess/10;}
+
+                    // Checking if each digit is between 1 & 9.
+                    int count = 0;
+                    for (int i = 0; i < 4; i++) {
+                        if (guessArray[i] < 1 || guessArray[i] > 9){
+                            count++;}
+                    }
+                    if (count > 0){
+                        System.out.println(ANSI_RED + "Try to make sure each digit is within the range of 1 - 9!" + ANSI_RESET);
+                        continue;}
+
+                    // Checking if each digit is different.
+                    if (guessArray[0] == guessArray[1] || guessArray[0] == guessArray[2] || guessArray[0] == guessArray[3] || guessArray[1] == guessArray[2] || guessArray[1] == guessArray[3] || guessArray[2] == guessArray[3]){
+                        System.out.println(ANSI_RED + "Make sure each digit of your guess is different!" + ANSI_RESET);
+                        continue;}
+
+                    // If all conditions are met, the loop is not repeated:
+                    incorrectEntry = false;
+                }
+
+                // Adds to guess count after each successful guess.
+                guessCount++;
+
+                // Checking for the number of bulls.
+                bulls = checkBulls(guessArray, number);
+                // Checking for the number of cows.
+                cows = checkCows(guessArray, number);
+                // Subtract the bulls included in the cows.
+                cows = cows - bulls;
+
+                System.out.println("BULLS: " + bulls + "     COWS: " + cows);
+
+                // Jumps back to beginning of loop depending on whether or not the guess was correct.
+                if (bulls == 4){
+                    System.out.println(ANSI_PURPLE + "Congratulations! You won!" + ANSI_RESET);}
+                else {
+                    System.out.println(ANSI_PURPLE + "Try again!" + ANSI_RESET);}
+            }
+
+            // Asks user if they would like to play again.
+            System.out.println("");
+            System.out.println("It only took you " + guessCount + " tries! Would you like to play again?");
+            replay = in.next();
+            System.out.println("");
+        }
+        while (replay.equalsIgnoreCase("Yes"));
+        
+        // Ending statement.
+        System.out.println(ANSI_BLUE + "Thanks for playing BULLS & COWS!" + ANSI_RESET);
+        
+        
+        
+    }
+    
+    // Method to check the number of bulls in the guess.
+    public static int checkBulls(int[] guessArray, int[] number) {
+        int bulls = 0;
+        for (int i = 0; i < 4; i++) {
+            if (guessArray[i] == number[i]){
+                bulls++;}
+        }
+        return bulls;
+    }
+    
+    // Method to check the number of cows in the guess.
+    public static int checkCows(int[] guessArray, int[] number) {
+        int cows = 0;
+        for (int i = 0; i < 4; i++) {
+            if (guessArray[i] == number[0] || guessArray[i] == number[1] || guessArray[i] == number[2] || guessArray[i] == number[3]){
+                cows++;}
+        }
+        return cows;
+    }
+    
+    // Method to print the intro statement slowly.
+    public static void printSlowly(String start) throws InterruptedException {
+        for (int i = 0; i < start.length(); i++) {
+            System.out.print(start.substring(i,i+1));
+            TimeUnit.MILLISECONDS.sleep(240);}
+        System.out.println("");
+    }
+        
+    
+}

@@ -43,7 +43,7 @@ static Scanner in = new Scanner (System.in);
                 TimeUnit.SECONDS.sleep(1);
                 System.out.println("Cows are the number of digits you guessed with the correct value but incorrect position.");
                 TimeUnit.SECONDS.sleep(1);
-                System.out.println("Try to guess the number is as few tries as possible! Have fun!");
+                System.out.println("Try to guess the number in as few tries as possible! Have fun!");
                 TimeUnit.SECONDS.sleep(1);
             default: System.out.println("Let's start then!");
                     System.out.println("");

@@ -1,5 +1,5 @@
 # bulls-and-cows
-Bulls and Cows Game - 2020, Python
+Bulls and Cows Game - 2020, Java
 
 ## About the Project
 
